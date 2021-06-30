@@ -11,7 +11,15 @@ namespace DataAccesslibrary.DataAccess
 {
     public class SqlConnector : IDataConnection
     {
-        string connString = "Server=DESKTOP-N5N3TKU;Database=USERdb;Trusted_Connection=True;";
+        string connString;
+        public SqlConnector(string connString)
+        {
+            this.connString = connString;
+        }
+        public void ChangeConnectionString(string connString)
+        {
+            this.connString = connString;
+        }
         public USER CreaUSER(USER model)
         {
             model.Id = GetLastInsertedId() + 1;
