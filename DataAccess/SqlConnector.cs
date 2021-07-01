@@ -12,10 +12,6 @@ namespace DataAccesslibrary.DataAccess
     public class SqlConnector : IDataConnection
     {
         string connString = "Server=DESKTOP-N5N3TKU;Database=USERdb;Trusted_Connection=True;";
-        public void SetConnectionString(string newConnStr)
-        {
-            this.connString = newConnStr;
-        }
         public UserModel PostUser(UserModel model)
         {
             model.Id = GetLastInsertedId() + 1;
@@ -34,7 +30,6 @@ namespace DataAccesslibrary.DataAccess
             da.Dispose();
             return model;
         }
-
         public List<UserModel> GetUser_All()
         {
             List<UserModel> output = new List<UserModel>();
@@ -63,7 +58,6 @@ namespace DataAccesslibrary.DataAccess
             }
             return output;
         }
-
         public UserModel DeleteUser(UserModel model)
         {
             using (var sc = new SqlConnection(connString))
@@ -79,26 +73,6 @@ namespace DataAccesslibrary.DataAccess
                 sc.Close();
             }
             return model;
-        }
-
-        public int GetLastInsertedId()
-        {
-            SqlConnection connection = new SqlConnection(connString);
-            SqlCommand command = new SqlCommand("SELECT TOP(1) Id FROM userTable ORDER BY 1 DESC", connection);
-
-            connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-
-            //won't need a while, since it will only retrieve one row
-            reader.Read();
-
-            //here is your data
-            int data = Convert.ToInt32(reader["Id"]);
-
-            reader.Close();
-            connection.Close();
-            return data;
-
         }
         public UserModel PutUser(UserModel oldVal, UserModel newVal)
         {
@@ -116,6 +90,29 @@ namespace DataAccesslibrary.DataAccess
             conn.Close();
             da.Dispose();
             return newVal;
+        }
+        public void SetConnectionString(string newConnStr)
+        {
+            this.connString = newConnStr;
+        }
+        private  int GetLastInsertedId()
+        {
+            SqlConnection connection = new SqlConnection(connString);
+            SqlCommand command = new SqlCommand("SELECT TOP(1) Id FROM userTable ORDER BY 1 DESC", connection);
+
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+
+            //won't need a while, since it will only retrieve one row
+            reader.Read();
+
+            //here is your data
+            int data = Convert.ToInt32(reader["Id"]);
+
+            reader.Close();
+            connection.Close();
+            return data;
+
         }
 
 
