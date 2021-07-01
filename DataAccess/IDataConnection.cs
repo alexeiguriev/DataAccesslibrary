@@ -9,9 +9,10 @@ namespace DataAccesslibrary.DataAccess
 {
     public interface IDataConnection
     {
-        USER CreaUSER(USER model);
-        USER DeleteUSER(USER model);
-        List<USER> GetUSER_All();
+        UserModel PostUser(UserModel model);
+        List<UserModel> GetUser_All();
+        UserModel PutUser(UserModel oldVal, UserModel newVal);
+        UserModel DeleteUser(UserModel model);
 
     }
 }

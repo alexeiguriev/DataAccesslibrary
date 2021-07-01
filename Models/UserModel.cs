@@ -14,7 +14,7 @@ namespace DataAccesslibrary.Models
         EmailAddress,
         Password
     }
-    public class USER
+    public class UserModel
     {
         /// <summary>
         /// The unic identifier for person.

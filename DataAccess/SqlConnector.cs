@@ -11,20 +11,15 @@ namespace DataAccesslibrary.DataAccess
 {
     public class SqlConnector : IDataConnection
     {
-        string connString;
-        public SqlConnector(string connString)
+        string connString = "Server=DESKTOP-N5N3TKU;Database=USERdb;Trusted_Connection=True;";
+        public void SetConnectionString(string newConnStr)
         {
-            this.connString = connString;
+            this.connString = newConnStr;
         }
-        public void ChangeConnectionString(string connString)
-        {
-            this.connString = connString;
-        }
-        public USER CreaUSER(USER model)
+        public UserModel PostUser(UserModel model)
         {
             model.Id = GetLastInsertedId() + 1;
             string query = "INSERT INTO userTable Values('" + (model.Id + 1) + "','" + model.FirstName + "','" + model.LastName + "','" + model.EmailAddress + "','" + model.Password + "')";
-
 
             SqlConnection conn = new SqlConnection(connString);
 
@@ -40,26 +35,9 @@ namespace DataAccesslibrary.DataAccess
             return model;
         }
 
-        public USER DeleteUSER(USER model)
+        public List<UserModel> GetUser_All()
         {
-            using (var sc = new SqlConnection(connString))
-            using (var cmd = sc.CreateCommand())
-            {
-                sc.Open();
-                cmd.CommandText = "DELETE FROM userTable WHERE (FirstName = @FirstName AND LastName = @LastName AND EmailAddress = @EmailAddress AND Password = @Password)";
-                cmd.Parameters.AddWithValue("@FirstName", model.FirstName);
-                cmd.Parameters.AddWithValue("@LastName", model.LastName);
-                cmd.Parameters.AddWithValue("@EmailAddress", model.EmailAddress);
-                cmd.Parameters.AddWithValue("@Password", model.Password);
-                cmd.ExecuteNonQuery();
-                sc.Close();
-            }
-            return model;
-        }
-
-        public List<USER> GetUSER_All()
-        {
-            List<USER> output = new List<USER>();
+            List<UserModel> output = new List<UserModel>();
             DataTable outputTable = new DataTable();
 
             string query = "select * from userTable";
@@ -76,7 +54,7 @@ namespace DataAccesslibrary.DataAccess
             da.Dispose();
             foreach (DataRow row in outputTable.Rows)
             {
-                USER intermetiateUser = new USER();
+                UserModel intermetiateUser = new UserModel();
                 intermetiateUser.FirstName = row["FirstName"].ToString();
                 intermetiateUser.LastName = row["LastName"].ToString();
                 intermetiateUser.EmailAddress = row["EmailAddress"].ToString();
@@ -84,6 +62,23 @@ namespace DataAccesslibrary.DataAccess
                 output.Add(intermetiateUser);
             }
             return output;
+        }
+
+        public UserModel DeleteUser(UserModel model)
+        {
+            using (var sc = new SqlConnection(connString))
+            using (var cmd = sc.CreateCommand())
+            {
+                sc.Open();
+                cmd.CommandText = "DELETE FROM userTable WHERE (FirstName = @FirstName AND LastName = @LastName AND EmailAddress = @EmailAddress AND Password = @Password)";
+                cmd.Parameters.AddWithValue("@FirstName", model.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", model.LastName);
+                cmd.Parameters.AddWithValue("@EmailAddress", model.EmailAddress);
+                cmd.Parameters.AddWithValue("@Password", model.Password);
+                cmd.ExecuteNonQuery();
+                sc.Close();
+            }
+            return model;
         }
 
         public int GetLastInsertedId()
@@ -105,5 +100,24 @@ namespace DataAccesslibrary.DataAccess
             return data;
 
         }
+        public UserModel PutUser(UserModel oldVal, UserModel newVal)
+        {
+            string query = "UPDATE userTable SET FirstName = '" + newVal.FirstName + "', LastName = '" + newVal.LastName + "', EmailAddress = '" + newVal.EmailAddress + "', Password = '" + newVal.Password + "' WHERE FirstName = '" + oldVal.FirstName + "' AND LastName = '" + oldVal.LastName + "' AND EmailAddress = '" + oldVal.EmailAddress + "' AND Password = '" + oldVal.Password + "';";
+
+            SqlConnection conn = new SqlConnection(connString);
+
+            SqlCommand cmd = new SqlCommand(query, conn);
+
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+
+            conn.Close();
+            da.Dispose();
+            return newVal;
+        }
+
+
     }
 }
